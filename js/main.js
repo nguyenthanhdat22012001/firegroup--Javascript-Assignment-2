@@ -196,7 +196,7 @@ function createButton(type='',text='',className='') {
 }
 
 
-function hanldeAddOptionInSelectFilter() {
+function addOptionInSelectFilter() {
   const data = handleGetAllUserInLocalStorage();
   const select_filter_year = document.getElementById('filter_year');
   select_filter_year.innerHTML = '<option value="">Năm sinh</option>';
@@ -240,7 +240,7 @@ function handleAddUser(e){
 
   handleAddUserInLocalStorage(data);
   showListUser();
-  hanldeAddOptionInSelectFilter();
+  addOptionInSelectFilter();
   cleanForm();
 }
 
@@ -248,7 +248,7 @@ function handleAddUser(e){
 function handleDeleteUser(id) {
   handleDeleteUserInLocalStorage(id);
   showListUser();
-  hanldeAddOptionInSelectFilter();
+  addOptionInSelectFilter();
 }
 
 function handleChangeFilterUser(select) {
@@ -418,7 +418,7 @@ form.addEventListener('submit',function(e){
 });
 
 showListUser();
-hanldeAddOptionInSelectFilter();
+addOptionInSelectFilter();
 
 
 
