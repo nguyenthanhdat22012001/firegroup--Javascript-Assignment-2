@@ -1,151 +1,17 @@
-// validate
-function validateString(str) {
-  if(typeof str == 'string'){
-     return str;
-  }
-  throw new Error(`${str} is type ${typeof str}, not string`);
-}
-
-function validatedArray(arr) {
-  if (Array.isArray(arr)) {
-      return arr;
-  }
-  throw new Error(`${arr} is type ${typeof(arr)}, not array`);
-}
-
-function validateKeyExistAndHasValueInObject(obj,key) {
-  if(obj[key] != "" && obj[key] != undefined){
-    return true;
-  }
-
-  return false;
-}
-
-function validateKeyExistInObject(obj,key) {
-  if(obj[key] != undefined){
-    return true;
-  }
-
-  return false;
-}
-
-function validateArrayEmpty(arr){
-  if(arr.length > 0){
-      return false;
-  }else{
-      return true;
-  }
-}
-
-// format
-function formatdateHDMY(dateString) {
-  const dateObj = new Date(dateString);
-  const yyyy = dateObj.getFullYear();
-  let mm = dateObj.getMonth() + 1; // Months start at 0!
-  let dd = dateObj.getDate();
-  // 👇️ With PM / AM
-const withPmAm = dateObj.toLocaleTimeString('en-US', {
-  // en-US can be set to 'default' to use user's browser settings
-  hour: '2-digit',
-  minute: '2-digit',
-});
-
-  if (dd < 10) dd = '0' + dd;
-  if (mm < 10) mm = '0' + mm; 
-
-  return `${withPmAm} ${dd}/${mm}/${yyyy}`;
-
-}
-
-// run now create data select input 
-(function() {
-    let start_year = 1990;
-    let end_year = new Date().getFullYear();
-    const select_year = document.getElementById('year');
-  
-    for (let i = start_year; i <= end_year; i++) {
-      let option = document.createElement("option");
-      option.text = i;
-      option.value = i;
-      select_year.appendChild(option);
-    }
-})();
-
-
-// handle main
-
- /* start handle with localstorage */
-
-        // users local storage
-
-function handleGetAllUserInLocalStorage(){
-  const users = localStorage.getItem('users');
-  const data = JSON.parse(users);
-  return data ? data : [];
-}
-
-function handleAddUserInLocalStorage(data){
-  const users = handleGetAllUserInLocalStorage();
-  const newData = [...users,data];
-  handleUpdateUserInLocalStorage(newData);
-}
-
-function handleUpdateUserInLocalStorage(data){
-  localStorage.setItem('users',JSON.stringify(data));
-}
-
-function handleDeleteUserInLocalStorage(id) {
-  const data = handleGetAllUserInLocalStorage();
-  let newData = [...data].filter(item => item.id !== id);
-  handleUpdateUserInLocalStorage(newData);
-}
-
-        // users filter local storage//
-
-function handleSetFilterUserInLocalStorage(obj) {
-  localStorage.setItem('filter',JSON.stringify(obj));
-}
-
-function handleGetFilterUserInLocalStorage() {
-  const data = localStorage.getItem('filter');
-  const newData = JSON.parse(data);
-  return newData ? newData : {};
-}
-
-function handleUpdateDataFilterUserInLocalStorage(data) {
-  const filter = handleGetFilterUserInLocalStorage();
-  let obj = {
-    ...filter,
-    data: data,
-  }
-  localStorage.setItem('filter',JSON.stringify(obj));
-}
-
-
-        // sort local storage //
-
-function handleSetSortInLocalStorage(obj) {
-  localStorage.setItem('sorts',JSON.stringify(obj));
-}
-
-function handleGetSortInLocalStorage() {
-  const data = localStorage.getItem('sorts');
-  const newData = JSON.parse(data);
-  return newData ? newData : {};
-}
-
-/* end handle with localstorage */
-
+import {notifyComfirm} from "./helpers/notifies.js"
+import * as validates from "./helpers/validates.js"
+import * as handleLocal from "./handleLocal.js"
+import {formatdateHDMY} from "./helpers/formats.js"
 
 /* start handle with DOM */
 
 function showListUser(){
   hanldeSortUser();
-  const users = handleGetAllUserInLocalStorage();
-  const filter = handleGetFilterUserInLocalStorage();
+  const users = handleLocal.handleGetAllUserInLocalStorage();
+  const filter = handleLocal.handleGetFilterUserInLocalStorage();
   let data = [];
 
-  if(validateKeyExistInObject(filter,'status') && filter.status){
+  if(validates.validateKeyExistInObject(filter,'status') && filter.status){
     data = filter.data;
    }else{
     data = users;
@@ -183,9 +49,9 @@ function createOneRowUserOnTable(index,obj){
 }
 
 function createButton(type='',text='',className='') {
-  const validText = validateString(text);
-  const validClassName = validateString(className);
-  const validType = validateString(type);
+  const validText = validates.validateString(text);
+  const validClassName =validates.validateString(className);
+  const validType =validates.validateString(type);
 
   const button = document.createElement('button');
   button.type = validType;
@@ -197,7 +63,7 @@ function createButton(type='',text='',className='') {
 
 
 function addOptionInSelectFilter() {
-  const data = handleGetAllUserInLocalStorage();
+  const data = handleLocal.handleGetAllUserInLocalStorage();
   const select_filter_year = document.getElementById('filter_year');
   select_filter_year.innerHTML = '<option value="">Năm sinh</option>';
   let years = [];
@@ -238,7 +104,7 @@ function handleAddUser(e){
     createBy: new Date()
   }
 
-  handleAddUserInLocalStorage(data);
+  handleLocal.handleAddUserInLocalStorage(data);
   showListUser();
   addOptionInSelectFilter();
   cleanForm();
@@ -246,14 +112,14 @@ function handleAddUser(e){
 
 
 function handleDeleteUser(id) {
-  handleDeleteUserInLocalStorage(id);
+  handleLocal.handleDeleteUserInLocalStorage(id);
   showListUser();
   addOptionInSelectFilter();
 }
 
 function handleChangeFilterUser(select) {
-  const  users = handleGetAllUserInLocalStorage(); 
-  let  filter = handleGetFilterUserInLocalStorage(); 
+  const  users = handleLocal.handleGetAllUserInLocalStorage(); 
+  let  filter = handleLocal.handleGetFilterUserInLocalStorage(); 
   let fields = {
     ...filter.fields,
     [select.target.name] : select.target.value
@@ -267,28 +133,28 @@ function handleChangeFilterUser(select) {
   data: data
  }
 
- if(!validateKeyExistAndHasValueInObject(fields,'year') && !validateKeyExistAndHasValueInObject(fields,'gender')){
+ if(!validates.validateKeyExistAndHasValueInObject(fields,'year') && !validates.validateKeyExistAndHasValueInObject(fields,'gender')){
     filter.status = false;
     filter.data = [];
   }
 
-  handleSetFilterUserInLocalStorage(filter);
+  handleLocal.handleSetFilterUserInLocalStorage(filter);
   showListUser();
 }
 
 function handleReturnFilterUser(users,fields) {
   let data = users;
 
-  if(validateKeyExistAndHasValueInObject(fields,'year') && !validateKeyExistAndHasValueInObject(fields,'gender')){
+  if(validates.validateKeyExistAndHasValueInObject(fields,'year') && !validates.validateKeyExistAndHasValueInObject(fields,'gender')){
     data = [...users].filter(item => item.year == fields['year']);
 
   }
 
-  if(validateKeyExistAndHasValueInObject(fields,'year') && validateKeyExistAndHasValueInObject(fields,'gender')){
+  if(validates.validateKeyExistAndHasValueInObject(fields,'year') && validates.validateKeyExistAndHasValueInObject(fields,'gender')){
     data = [...users].filter(item => item.year == fields['year'] &&   item.gender == fields['gender']);
   }
 
-  if(validateKeyExistAndHasValueInObject(fields,'gender') && !validateKeyExistAndHasValueInObject(fields,'year')){
+  if(validates.validateKeyExistAndHasValueInObject(fields,'gender') && !validates.validateKeyExistAndHasValueInObject(fields,'year')){
     data = [...users].filter(item => item.gender == fields['gender']);
 
   }
@@ -298,7 +164,7 @@ function handleReturnFilterUser(users,fields) {
 
 
 function handleChangeSortUser(select) {
-  let sorts = handleGetSortInLocalStorage(); 
+  let sorts = handleLocal.handleGetSortInLocalStorage(); 
   let newSorts = {
     ...sorts,
     [select.target.name] : select.target.value
@@ -309,15 +175,15 @@ function handleChangeSortUser(select) {
   }
   
   
-  handleSetSortInLocalStorage(newSorts);
+  handleLocal.handleSetSortInLocalStorage(newSorts);
   showListUser();
 }
 
 function hanldeSortUser() {
-  let filter = handleGetFilterUserInLocalStorage(); 
-  let users = handleGetAllUserInLocalStorage();
+  let filter = handleLocal.handleGetFilterUserInLocalStorage(); 
+  let users = handleLocal.handleGetAllUserInLocalStorage();
 
-  if(validateArrayEmpty(users)){
+  if(validates.validateArrayEmpty(users)){
     return
   }
 
@@ -327,16 +193,16 @@ function hanldeSortUser() {
 
  let data = handleReturnSort(users);
 
- if(validateKeyExistInObject(filter,'status') && filter.status){
-  handleUpdateDataFilterUserInLocalStorage(data);
+ if(validates.validateKeyExistInObject(filter,'status') && filter.status){
+  handleLocal.handleUpdateDataFilterUserInLocalStorage(data);
  }else{
-  handleUpdateUserInLocalStorage(data);
+  handleLocal.handleUpdateUserInLocalStorage(data);
  }
 
 }
 
 function handleReturnSort(users) {
-  const sorts = handleGetSortInLocalStorage(); 
+  const sorts = handleLocal.handleGetSortInLocalStorage(); 
   let data = [];
 
     switch (sorts.sort_field) {
@@ -386,24 +252,6 @@ function handleReturnSort(users) {
 
 /* end handle event */
 
-/* start notify */
-function notifyComfirm(title,reply,callbak){
-  Swal.fire({
-    title: title,
-    showCancelButton: true,
-    confirmButtonText: 'Lưu',
-    cancelButtonText: 'Hủy',
-  }).then((result) => {
-    if (result.isConfirmed) {
-      callbak();
-      Swal.fire(reply, '', 'success')
-    } 
-  })
-}
-
-/* end notify */
-
-
 const form = document.getElementById('form_user');
 
 document.getElementById('sort_field').addEventListener('change',handleChangeSortUser);
@@ -420,5 +268,16 @@ form.addEventListener('submit',function(e){
 showListUser();
 addOptionInSelectFilter();
 
+// run now create data select input 
+(function() {
+  let start_year = 1990;
+  let end_year = new Date().getFullYear();
+  const select_year = document.getElementById('year');
 
-
+  for (let i = start_year; i <= end_year; i++) {
+    let option = document.createElement("option");
+    option.text = i;
+    option.value = i;
+    select_year.appendChild(option);
+  }
+})();
