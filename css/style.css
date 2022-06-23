@@ -1,0 +1,74 @@
+
+/*  # custom scroll # */
+
+/* width */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px; 
+}
+   
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #ccc; 
+    border-radius: 10px;
+}
+  
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #888; 
+}
+
+/* # custom scroll # */
+
+.wrapper{
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.aside{
+    width: 40%;
+    border-right: 3px solid #ccc;
+}
+
+.main{
+    width: 60%;
+}
+
+.form, .content{
+    width: 80%;
+    margin: 50px auto;
+}
+
+table{
+    display: block;
+    max-height: 500px;
+    overflow-y: scroll;
+}
+
+table tbody tr button{
+    opacity: 0;
+}
+
+table tbody tr:hover button{
+    opacity: 1;
+}
+
+table thead th { 
+    position: sticky; 
+    top: -2px; 
+    z-index: 1; 
+    background-color: #fff;
+}
+
+@media (max-width: 770px) {
+    .aside, .main{
+        width: 100%;
+        border: none;
+    }
+}
